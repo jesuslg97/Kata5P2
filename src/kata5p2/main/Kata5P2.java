@@ -8,44 +8,38 @@ import Kata5p2.model.Mail;
 import Kata5p2.view.HistogramDisplay;
 import Kata5p2.view.MailHistogramBuilder;
 import Kata5p2.view.MailListReader;
+import java.sql.SQLException;
+import kata5p2.view.MailListReaderBD;
 
 public class Kata5P2 {
 
-    private String fileName;
-    private List<Mail> mailList;
-    private Histogram<String> histogram;
-    private HistogramDisplay histoDisplay;
-
-    public Kata5P2(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public static void main(String[] args) {
-        Kata5P2 kata4 = new Kata5P2("email.txt");
+   private List<Mail> mailList;
+   private Histogram<String> histogram;
+   private HistogramDisplay histoDisplay;
+   public static void main(String[] args) {
+       Kata5P2 kata4 = new Kata5P2();
  
-        try {
-            kata4.execute();
-        }catch (FileNotFoundException e) {
-            System.out.println("Fichero no encontrado: " + e.getMessage());
-        }catch (IOException e) {
-            System.out.println("Error de entrada salida: " + e.getMessage());
+       try {
+           kata4.execute();
+       }catch (ClassNotFoundException e) {
+           System.out.println("Error al conectar con la base de datos: " + e.getMessage());
+       }catch (IOException e) {
+           System.out.println("Error de entrada salida: " + e.getMessage());
+       }catch (SQLException ex) {
+           System.out.println("Error de SQL:" + ex.getMessage());
         }
     }
-
-    public void execute() throws IOException {
+    public void execute() throws IOException, ClassNotFoundException, SQLException {
         input();
         process();
         output();
     }
-
-    public void input() throws IOException {
-        mailList = MailListReader.read(fileName);
+    public void input() throws IOException, ClassNotFoundException, SQLException {
+        mailList = MailListReaderBD.read();
     }
-
     public void process() {
         histogram = MailHistogramBuilder.build(mailList);
     }
-
     public void output() {
         histoDisplay = new HistogramDisplay(histogram);
         histoDisplay.execute();
